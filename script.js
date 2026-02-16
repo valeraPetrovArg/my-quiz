@@ -116,7 +116,7 @@ function renderQuestion() {
     data._displayOptions.forEach((opt) => {
         const div = document.createElement('div');
         div.className = 'option-item';
-        if (userAnswers[currentIdx]?.includes(opt.originalIdx)) div.classList.add('selected');
+        if (userAnswers[currentIdx] && userAnswers[currentIdx].includes(opt.originalIdx)) div.classList.add('selected');
         div.innerText = opt.text;
         div.onclick = () => {
             if (isChecked) return;
@@ -126,9 +126,10 @@ function renderQuestion() {
                 userAnswers[currentIdx] = [opt.originalIdx];
             } else {
                 div.classList.toggle('selected');
-                if (!userAnswers[currentIdx]) userAnswers[currentIdx] = [];
-                userAnswers[currentIdx] = Array.from(container.querySelectorAll('.selected')).map(el => 
-                    data._displayOptions[Array.from(container.children).indexOf(el)].originalIdx);
+                const selectedElements = Array.from(container.querySelectorAll('.selected'));
+                userAnswers[currentIdx] = selectedElements.map(el => 
+                    data._displayOptions[Array.from(container.children).indexOf(el)].originalIdx
+                );
             }
         };
         container.appendChild(div);
@@ -145,13 +146,9 @@ document.getElementById('check-btn').onclick = () => {
     const items = document.querySelectorAll('.option-item');
     data._displayOptions.forEach((opt, i) => {
         items[i].classList.add('disabled');
-        if (data.correct.includes(opt.originalIdx) && userAns.includes(opt.originalIdx)) {
-            items[i].classList.add('correct-hit');
-        } else if (data.correct.includes(opt.originalIdx)) {
-            items[i].classList.add('correct-missed');
-        } else if (userAns.includes(opt.originalIdx)) {
-            items[i].classList.add('wrong-hit');
-        }
+        if (data.correct.includes(opt.originalIdx) && userAns.includes(opt.originalIdx)) items[i].classList.add('correct-hit');
+        else if (data.correct.includes(opt.originalIdx)) items[i].classList.add('correct-missed');
+        else if (userAns.includes(opt.originalIdx)) items[i].classList.add('wrong-hit');
     });
 };
 
@@ -176,25 +173,37 @@ function finishQuiz() {
     clearInterval(questionTimerInterval);
     let score = 0;
     let report = '';
+    
+    const legendHTML = `
+        <div style="text-align:left; margin: 15px 0; padding: 12px; background: #fdfdfd; border-radius: 10px; font-size: 13px; border: 1px solid #eee;">
+            <div style="margin-bottom:8px;"><span style="display:inline-block; width:16px; height:16px; background:#FFEB3B; border-radius:4px; vertical-align:middle; border:1px solid #ddd;"></span> <b>Желтый:</b> Выбрано верно</div>
+            <div style="margin-bottom:8px;"><span style="display:inline-block; width:16px; height:16px; background:#4CAF50; border-radius:4px; vertical-align:middle; border:1px solid #ddd;"></span> <b>Зеленый:</b> Нужно было выбрать</div>
+            <div><span style="display:inline-block; width:16px; height:16px; background:#F44336; border-radius:4px; vertical-align:middle; border:1px solid #ddd;"></span> <b>Красный:</b> Ошибка (лишнее)</div>
+        </div>
+    `;
+
     quizQuestions.forEach((q, i) => {
         const ans = userAnswers[i] || [];
-        const isCorrect = JSON.stringify(ans.sort()) === JSON.stringify([...q.correct].sort());
+        const isCorrect = ans.length === q.correct.length && ans.every(v => q.correct.includes(v));
         if (isCorrect) score++;
+        
         let opts = '';
         q.options.forEach((o, idx) => {
-            let cls = 'neutral';
-            if (q.correct.includes(idx) && ans.includes(idx)) cls = 'correct-hit';
-            else if (q.correct.includes(idx)) cls = 'correct-missed';
-            else if (ans.includes(idx)) cls = 'wrong-hit';
-            opts += `<div class="report-opt ${cls}">${o}</div>`;
+            let cls = 'report-opt';
+            if (q.correct.includes(idx) && ans.includes(idx)) cls += ' correct-hit';
+            else if (q.correct.includes(idx)) cls += ' correct-missed';
+            else if (ans.includes(idx)) cls += ' wrong-hit';
+            opts += `<div class="${cls}">${o}</div>`;
         });
-        report += `<div class="report-item"><b>${q.question}</b>${opts}</div>`;
+        report += `<div class="report-item"><b>${i + 1}. ${q.question}</b>${opts}</div>`;
     });
+
     document.getElementById('quiz-screen').innerHTML = `
         <div style="text-align:center">
-            <h2>Итог: ${score}/${quizQuestions.length}</h2>
+            <h2>Результат: ${score} из ${quizQuestions.length}</h2>
+            ${legendHTML}
             <div class="report-container">${report}</div>
-            <button onclick="location.reload()" style="width:100%; background:#333; color:white; padding:15px; margin-top:20px; border-radius:10px;">В начало</button>
+            <button onclick="location.reload()" style="width:100%; background:#333; color:white; padding:15px; margin-top:20px; border-radius:12px; font-weight:bold;">На главную</button>
         </div>`;
 }
 

@@ -3,28 +3,32 @@ body { font-family: -apple-system, system-ui, sans-serif; background-color: #f5f
 h2 { margin-top: 0; color: #333; font-size: 1.2rem; line-height: 1.4; }
 .setup-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
 .setup-item label { display: block; margin-bottom: 4px; font-size: 12px; color: #666; }
-.setup-item input, .setup-item select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; -webkit-appearance: none; } /* 16px предотвращает зум на iPhone */
+.setup-item input, .setup-item select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; -webkit-appearance: none; }
 .setup-item input:disabled { background-color: #f0f0f0; opacity: 0.7; }
 .setup-checkboxes { margin-bottom: 20px; display: flex; flex-direction: column; gap: 12px; font-size: 14px; }
 #start-btn { width: 100%; background: #333; color: white; padding: 16px; border: none; border-radius: 12px; cursor: pointer; font-weight: bold; font-size: 16px; }
 .timer-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 13px; font-weight: bold; }
-.option-item { border: 1px solid #e0e0e0; border-radius: 10px; padding: 14px; margin-bottom: 8px; cursor: pointer; font-size: 15px; -webkit-tap-highlight-color: transparent; }
+
+/* Стили опций */
+.option-item, .report-opt { border: 1px solid #e0e0e0; border-radius: 10px; padding: 14px; margin-bottom: 8px; cursor: pointer; font-size: 15px; -webkit-tap-highlight-color: transparent; }
 .option-item.selected { background-color: #f0f0f0; border-color: #bbb; }
-.option-item.correct-hit { background: #FFEB3B !important; color: #000 !important; font-weight: bold; border-color: #FBC02D !important; }
-.option-item.correct-missed { background: #4CAF50 !important; color: #fff !important; font-weight: bold; border-color: #388E3C !important; }
-.option-item.wrong-hit { background: #F44336 !important; color: #fff !important; font-weight: bold; border-color: #D32F2F !important; }
+
+/* ЦВЕТА (Универсальные для всех режимов) */
+.correct-hit { background: #FFEB3B !important; color: #000 !important; font-weight: bold; border-color: #FBC02D !important; }
+.correct-missed { background: #4CAF50 !important; color: #fff !important; font-weight: bold; border-color: #388E3C !important; }
+.wrong-hit { background: #F44336 !important; color: #fff !important; font-weight: bold; border-color: #D32F2F !important; }
+
 .option-item.disabled { pointer-events: none; }
 .controls { display: flex; justify-content: space-between; margin-top: 20px; gap: 8px; }
 button { padding: 14px; border: none; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 15px; flex: 1; }
 .progress-container { height: 6px; background: #eee; border-radius: 3px; margin-bottom: 20px; }
 #progress-bar { height: 100%; background: #bbb; width: 0%; transition: 0.3s; }
-.report-container { max-height: 60vh; overflow-y: auto; padding-right: 5px; }
-.report-item { border-bottom: 1px solid #eee; padding: 15px 0; }
-.report-opt { padding: 10px; border-radius: 8px; margin: 4px 0; font-size: 13px; border: 1px solid #f0f0f0; }
+.report-container { max-height: 60vh; overflow-y: auto; padding-right: 5px; margin-top: 10px; }
+.report-item { border-bottom: 1px solid #eee; padding: 15px 0; text-align: left; }
+.report-opt { cursor: default; padding: 10px; font-size: 13px; }
 
-/* АДАПТАЦИЯ ДЛЯ МОБИЛЬНЫХ */
 @media (max-width: 480px) {
-    .setup-grid { grid-template-columns: 1fr; } /* Сетка в одну колонку */
+    .setup-grid { grid-template-columns: 1fr; }
     .quiz-card { padding: 15px; border-radius: 0; height: 100vh; max-width: none; display: flex; flex-direction: column; justify-content: center; }
     h2 { font-size: 1.1rem; }
     button { padding: 12px; }
